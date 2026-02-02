@@ -1,981 +1,1747 @@
-import { motion, useAnimation } from "framer-motion";
-import { useEffect, useRef } from "react";
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AI-система отчётов для образовательных центров | TAGIR</title>
+  <style>
+    /* Логотип — фиксированный в левом верхнем углу, прозрачный фон, адаптивный размер */
+    .logo-fixed {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      z-index: 1000;
+      width: 100px;
+      height: auto;
+      transition: transform 0.3s ease;
+    }
+    .logo-fixed:hover {
+      transform: scale(1.05);
+    }
 
-export default function App() {
-  const controls = useAnimation();
-  const sectionRefs = {
-    hero: useRef(null),
-    problems: useRef(null),
-    howItWorks: useRef(null),
-    features: useRef(null),
-    methodology: useRef(null),
-    examples: useRef(null),
-    pricing: useRef(null),
-    contact: useRef(null)
-  };
-
-  useEffect(() => {
-    document.documentElement.style.scrollBehavior = 'smooth';
-    
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            entry.target.style.opacity = 1;
-            entry.target.style.transform = 'translateY(0)';
-          }
-        });
-      },
-      { threshold: 0.1 }
-    );
-
-    Object.values(sectionRefs).forEach(ref => {
-      if (ref.current) {
-        ref.current.style.opacity = 0;
-        ref.current.style.transform = 'translateY(40px)';
-        ref.current.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-        observer.observe(ref.current);
+    /* Адаптация под мобильные */
+    @media (max-width: 768px) {
+      .logo-fixed {
+        width: 100px;
+        top: 16px;
+        left: 16px;
       }
-    });
+    }
 
-    return () => {
-      Object.values(sectionRefs).forEach(ref => {
-        if (ref.current) observer.unobserve(ref.current);
-      });
-      document.documentElement.style.scrollBehavior = 'unset';
-    };
-  }, []);
+    /* Основной контент — отступ сверху, чтобы не перекрывался логотипом */
+    body {
+      margin-top: 80px; /* достаточно, чтобы логотип не закрывал заголовок */
+    }
+  </style>
+</head>
+<body>
+  <!-- ЛОГОТИП — вставляется здесь, поверх всего -->
+  <img src="logo.png" alt="TAGIR Logo" class="logo-fixed">
 
-  const scrollToSection = (sectionRef) => {
-    sectionRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-система отчётов для образовательных центров | TAGIR</title>
+    <meta name="description" content="Автоматическая генерация персонализированных отчётов для родителей. Удерживайте клиентов через понимание развития детей.">
+    <meta name="keywords" content="отчёты для родителей, образовательный центр, удержание клиентов, AI отчёты, развитие мышления">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-  const AnimatedSection = ({ children, refKey, className = "" }) => (
-    <motion.section
-      ref={sectionRefs[refKey]}
-      initial={{ opacity: 0, y: 40 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-100px" }}
-      transition={{ duration: 0.6 }}
-      className={className}
-    >
-      {children}
-    </motion.section>
-  );
+        html {
+            scroll-behavior: smooth;
+        }
 
-  const AnimatedItem = ({ children, delay = 0, className = "" }) => (
-    <motion.div
-      initial={{ opacity: 0, y: 30 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.5, delay }}
-      className={className}
-    >
-      {children}
-    </motion.div>
-  );
+        body {
+            font-family: 'Inter', sans-serif;
+            color: #2D3748;
+            background: #F8F7F4;
+            line-height: 1.6;
+        }
 
-  const FeatureCard = ({ icon, title, description, delay, color }) => (
-    <AnimatedItem delay={delay} className="h-full">
-      <div className={`bg-white p-6 h-full rounded-2xl shadow-md shadow-gray-200/40 hover:shadow-lg hover:shadow-gray-200/60 transition-all duration-300 border-t-4 border-${color}-500`}>
-        <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 bg-${color}-50`}>
-          {icon}
-        </div>
-        <h3 className="text-lg font-bold text-gray-800 mb-2" style={{ fontFamily: 'Montserrat, sans-serif' }}>{title}</h3>
-        <p className="text-gray-600 text-sm leading-relaxed">{description}</p>
-      </div>
-    </AnimatedItem>
-  );
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+        }
 
-  // SVG Icons as JSX components
-  const SparklesIcon = ({ className = "" }) => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
-      <path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"></path>
-      <path d="M20 2v4"></path>
-      <path d="M22 4h-4"></path>
-      <circle cx="4" cy="20" r="2"></circle>
-    </svg>
-  );
+        /* Hero Section */
+        .hero {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            background: linear-gradient(135deg, #1E3A5F 0%, #2D5A87 100%);
+        }
 
-  const ArrowRightIcon = ({ className = "" }) => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
-      <path d="M5 12h14"></path>
-      <path d="m12 5 7 7-7 7"></path>
-    </svg>
-  );
+        .hero-blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.3;
+            pointer-events: none;
+            animation: float 20s ease-in-out infinite;
+        }
 
-  const UsersIcon = ({ className = "", color = "#E07A5F" }) => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true" style={{ color }}>
-      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
-      <path d="M16 3.128a4 4 0 0 1 0 7.744"></path>
-      <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
-      <circle cx="9" cy="7" r="4"></circle>
-    </svg>
-  );
+        .blob-1 {
+            width: 400px;
+            height: 400px;
+            background: #4A7C59;
+            top: 10%;
+            left: 5%;
+        }
 
-  const WarningIcon = ({ className = "", color = "#1E3A5F" }) => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true" style={{ color }}>
-      <path d="M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z"></path>
-      <path d="M12 15h.01"></path>
-      <path d="M12 7v4"></path>
-    </svg>
-  );
+        .blob-2 {
+            width: 300px;
+            height: 300px;
+            background: #E07A5F;
+            bottom: 20%;
+            right: 10%;
+            animation-delay: 5s;
+        }
 
-  const ClockIcon = ({ className = "", color = "#4A7C59" }) => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true" style={{ color }}>
-      <path d="M12 6v6l4 2"></path>
-      <circle cx="12" cy="12" r="10"></circle>
-    </svg>
-  );
+        .blob-3 {
+            width: 250px;
+            height: 250px;
+            background: #5A9A6D;
+            top: 50%;
+            right: 25%;
+            animation-delay: 10s;
+        }
 
-  const MicIcon = ({ className = "", color = "#4A7C59" }) => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true" style={{ color }}>
-      <path d="M12 19v3"></path>
-      <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
-      <rect x="9" y="2" width="6" height="13" rx="3"></rect>
-    </svg>
-  );
+        @keyframes float {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-30px) scale(1.1); }
+        }
 
-  const BrainIcon = ({ className = "", color = "#1E3A5F" }) => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true" style={{ color }}>
-      <path d="M12 18V5"></path>
-      <path d="M15 13a4.17 4.17 0 0 1-3-4 4.17 4.17 0 0 1-3 4"></path>
-      <path d="M17.598 6.5A3 3 0 1 0 12 5a3 3 0 1 0-5.598 1.5"></path>
-      <path d="M17.997 5.125a4 4 0 0 1 2.526 5.77"></path>
-      <path d="M18 18a4 4 0 0 0 2-7.464"></path>
-      <path d="M19.967 17.483A4 4 0 1 1 12 18a4 4 0 1 1-7.967-.517"></path>
-      <path d="M6 18a4 4 0 0 1-2-7.464"></path>
-      <path d="M6.003 5.125a4 4 0 0 0-2.526 5.77"></path>
-    </svg>
-  );
+        .hero-content {
+            position: relative;
+            z-index: 10;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            text-align: center;
+        }
 
-  const SendIcon = ({ className = "", color = "#E07A5F" }) => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true" style={{ color }}>
-      <path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"></path>
-      <path d="m21.854 2.147-10.94 10.939"></path>
-    </svg>
-  );
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 50px;
+            padding: 10px 20px;
+            margin-bottom: 30px;
+        }
 
-  const BookOpenIcon = ({ className = "", color = "#1E3A5F" }) => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true" style={{ color }}>
-      <path d="M12 7v14"></path>
-      <path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"></path>
-    </svg>
-  );
+        .hero-badge span {
+            color: rgba(255,255,255,0.9);
+            font-size: 14px;
+            font-weight: 500;
+        }
 
-  const FileTextIcon = ({ className = "", color = "#E07A5F" }) => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true" style={{ color }}>
-      <path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"></path>
-      <path d="M14 2v5a1 1 0 0 0 1 1h5"></path>
-      <path d="M10 9H8"></path>
-      <path d="M16 13H8"></path>
-      <path d="M16 17H8"></path>
-    </svg>
-  );
+        .sparkle {
+            color: #E07A5F;
+            font-size: 18px;
+        }
 
-  const HouseIcon = ({ className = "", color = "#4A7C59" }) => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true" style={{ color }}>
-      <path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"></path>
-      <path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-    </svg>
-  );
+        .hero h1 {
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            color: white;
+            margin-bottom: 24px;
+            line-height: 1.2;
+        }
 
-  const TrendingUpIcon = ({ className = "", color = "#1E3A5F" }) => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true" style={{ color }}>
-      <path d="M16 7h6v6"></path>
-      <path d="m22 7-8.5 8.5-5-5L2 17"></path>
-    </svg>
-  );
+        .hero h1 span {
+            color: #E07A5F;
+        }
 
-  const PaletteIcon = ({ className = "", color = "#E07A5F" }) => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true" style={{ color }}>
-      <path d="M12 22a1 1 0 0 1 0-20 10 9 0 0 1 10 9 5 5 0 0 1-5 5h-2.25a1.75 1.75 0 0 0-1.4 2.8l.3.4a1.75 1.75 0 0 1-1.4 2.8z"></path>
-      <circle cx="13.5" cy="6.5" r=".5" fill="currentColor"></circle>
-      <circle cx="17.5" cy="10.5" r=".5" fill="currentColor"></circle>
-      <circle cx="6.5" cy="12.5" r=".5" fill="currentColor"></circle>
-      <circle cx="8.5" cy="7.5" r=".5" fill="currentColor"></circle>
-    </svg>
-  );
+        .hero p {
+            font-size: clamp(1rem, 2vw, 1.25rem);
+            color: rgba(255,255,255,0.8);
+            max-width: 600px;
+            margin: 0 auto 40px;
+            line-height: 1.6;
+        }
 
-  const LightbulbIcon = ({ className = "", color = "#4A7C59" }) => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true" style={{ color }}>
-      <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"></path>
-      <path d="M9 18h6"></path>
-      <path d="M10 22h4"></path>
-    </svg>
-  );
+        .hero-buttons {
+            display: flex;
+            flex-direction: column;
+            sm:flex-direction: row;
+            gap: 16px;
+            justify-content: center;
+            margin-bottom: 60px;
+        }
 
-  const TargetIcon = ({ className = "", color = "#1E3A5F" }) => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true" style={{ color }}>
-      <circle cx="12" cy="12" r="10"></circle>
-      <circle cx="12" cy="12" r="6"></circle>
-      <circle cx="12" cy="12" r="2"></circle>
-    </svg>
-  );
+        @media (min-width: 640px) {
+            .hero-buttons {
+                flex-direction: row;
+            }
+        }
 
-  const RocketIcon = ({ className = "", color = "#E07A5F" }) => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true" style={{ color }}>
-      <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"></path>
-      <path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"></path>
-      <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"></path>
-      <path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"></path>
-    </svg>
-  );
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #E07A5F;
+            color: white;
+            padding: 16px 32px;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(224, 122, 95, 0.3);
+            animation: pulse 3s ease-in-out infinite;
+        }
 
-  const MessageCircleIcon = ({ className = "", color = "white" }) => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true" style={{ color }}>
-      <path d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719"></path>
-    </svg>
-  );
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
 
-  const MailIcon = ({ className = "", color = "white" }) => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true" style={{ color }}>
-      <path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7"></path>
-      <rect x="2" y="4" width="20" height="16" rx="2"></rect>
-    </svg>
-  );
+        .btn-primary:hover {
+            background: #C6694F;
+            box-shadow: 0 15px 40px rgba(224, 122, 95, 0.4);
+            transform: translateY(-2px);
+        }
 
-  const CheckIcon = ({ className = "", color = "#718096" }) => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true" style={{ color }}>
-      <path d="M20 6 9 17l-5-5"></path>
-    </svg>
-  );
+        .btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: 2px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 16px 32px;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
 
-  const PhoneIcon = ({ className = "", color = "currentColor" }) => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true" style={{ color }}>
-      <path d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384"></path>
-    </svg>
-  );
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.1);
+        }
 
-  const CircleCheckIcon = ({ className = "", color = "#4A7C59" }) => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true" style={{ color }}>
-      <path d="M21.801 10A10 10 0 1 1 17 3.335"></path>
-      <path d="m9 11 3 3L22 4"></path>
-    </svg>
-  );
+        .hero-features {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 32px;
+            color: rgba(255,255,255,0.6);
+            font-size: 14px;
+        }
 
-  return (
-    <main className="min-h-screen font-sans antialiased">
-      {/* Navigation */}
-      <nav className="fixed w-full bg-white/10 backdrop-blur-sm z-50 py-4 px-6">
-        <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#1E3A5F] to-[#4A7C59] flex items-center justify-center">
-              <BrainIcon className="w-4 h-4 text-white" />
-            </div>
-            <span className="text-xl font-bold text-white" style={{ fontFamily: 'Montserrat, sans-serif' }}>TAGIR</span>
-          </div>
-          <div className="hidden md:flex gap-8 text-white/80">
-            <button onClick={() => scrollToSection(sectionRefs.howItWorks)} className="hover:text-white transition-colors">Как это работает</button>
-            <button onClick={() => scrollToSection(sectionRefs.methodology)} className="hover:text-white transition-colors">Методика</button>
-            <button onClick={() => scrollToSection(sectionRefs.examples)} className="hover:text-white transition-colors">Примеры</button>
-            <button onClick={() => scrollToSection(sectionRefs.pricing)} className="hover:text-white transition-colors">Тарифы</button>
-          </div>
-          <button 
-            onClick={() => scrollToSection(sectionRefs.contact)}
-            className="bg-[#E07A5F] hover:bg-[#C6694F] text-white px-6 py-2 rounded-lg font-medium transition-all duration-300 shadow-lg hover:shadow-xl"
-          >
-            Запросить демо
-          </button>
-        </div>
-      </nav>
+        .hero-feature {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
 
-      {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-[#1E3A5F] to-[#2D5A87] pt-20">
-        <div className="absolute rounded-full blur-3xl opacity-30 pointer-events-none" style={{ width: '400px', height: '400px', backgroundColor: '#4A7C59', top: '10%', left: '5%' }}></div>
-        <div className="absolute rounded-full blur-3xl opacity-30 pointer-events-none" style={{ width: '300px', height: '300px', backgroundColor: '#E07A5F', bottom: '20%', right: '10%' }}></div>
-        <div className="absolute rounded-full blur-3xl opacity-30 pointer-events-none" style={{ width: '250px', height: '250px', backgroundColor: '#5A9A6D', top: '50%', right: '25%' }}></div>
+        .hero-feature::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: #4A7C59;
+            border-radius: 50%;
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 32px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 24px;
+            height: 40px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 20px;
+            display: flex;
+            justify-content: center;
+            padding-top: 8px;
+        }
+
+        .scroll-indicator::after {
+            content: '';
+            width: 6px;
+            height: 10px;
+            background: rgba(255,255,255,0.5);
+            border-radius: 3px;
+            animation: scrollBounce 2s ease-in-out infinite;
+        }
+
+        @keyframes scrollBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(8px); }
+        }
+
+        /* Section Styles */
+        section {
+            padding: 80px 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-header h2 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            color: #2D3748;
+            margin-bottom: 16px;
+        }
+
+        .section-header p {
+            font-size: 18px;
+            color: #718096;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Pain Points */
+        .pain-points {
+            background: #F8F7F4;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+        }
+
+        .card {
+            background: white;
+            padding: 32px;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.12);
+        }
+
+        .card-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        .card h3 {
+            font-size: 20px;
+            margin-bottom: 12px;
+            color: #2D3748;
+        }
+
+        .card p {
+            color: #718096;
+            line-height: 1.6;
+        }
+
+        /* Solution Section */
+        .solution {
+            background: linear-gradient(135deg, #1E3A5F 0%, #2D5A87 100%);
+            color: white;
+        }
+
+        .solution .section-header h2,
+        .solution .section-header p {
+            color: white;
+        }
+
+        .solution .section-header p {
+            opacity: 0.7;
+        }
+
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 32px;
+            position: relative;
+        }
+
+        .step {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 24px;
+            padding: 40px 32px;
+            text-align: center;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .step:hover {
+            background: rgba(255,255,255,0.15);
+        }
+
+        .step-number {
+            position: absolute;
+            top: -16px;
+            left: 32px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+            color: white;
+        }
+
+        .step-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            font-size: 36px;
+        }
+
+        .step h3 {
+            font-size: 20px;
+            margin-bottom: 12px;
+            color: white;
+        }
+
+        .step p {
+            color: rgba(255,255,255,0.7);
+            line-height: 1.6;
+        }
+
+        .solution-cta {
+            text-align: center;
+            margin-top: 48px;
+        }
+
+        /* Features */
+        .features {
+            background: #F8F7F4;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 28px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.1);
+        }
+
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
+            font-size: 22px;
+        }
+
+        .feature-card h3 {
+            font-size: 18px;
+            margin-bottom: 8px;
+            color: #2D3748;
+        }
+
+        .feature-card p {
+            color: #718096;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        /* Methodology */
+        .methodology {
+            background: white;
+        }
+
+        .methodology .section-header span {
+            color: #1E3A5F;
+        }
+
+        .stages-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 24px;
+        }
+
+        .stage-card {
+            background: #F8F7F4;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+        }
+
+        .stage-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.12);
+        }
+
+        .stage-card.green { border-top: 4px solid #4A7C59; }
+        .stage-card.blue { border-top: 4px solid #1E3A5F; }
+        .stage-card.orange { border-top: 4px solid #E07A5F; }
+
+        .stage-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 24px 24px 16px;
+        }
+
+        .stage-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .stage-age {
+            font-size: 12px;
+            font-weight: 600;
+            padding: 6px 12px;
+            border-radius: 20px;
+        }
+
+        .stage-card.green .stage-icon { background: rgba(74, 124, 89, 0.15); }
+        .stage-card.green .stage-age { background: rgba(74, 124, 89, 0.15); color: #4A7C59; }
         
-        <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <AnimatedItem delay={0.2}>
-            <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 mb-8">
-              <SparklesIcon className="w-4 h-4 text-[#E07A5F]" />
-              <span className="text-white/90 text-sm font-medium">Новое поколение коммуникации с родителями</span>
+        .stage-card.blue .stage-icon { background: rgba(30, 58, 95, 0.15); }
+        .stage-card.blue .stage-age { background: rgba(30, 58, 95, 0.15); color: #1E3A5F; }
+        
+        .stage-card.orange .stage-icon { background: rgba(224, 122, 95, 0.15); }
+        .stage-card.orange .stage-age { background: rgba(224, 122, 95, 0.15); color: #E07A5F; }
+
+        .stage-content {
+            padding: 0 24px 24px;
+        }
+
+        .stage-content h3 {
+            font-size: 18px;
+            margin-bottom: 12px;
+            color: #2D3748;
+        }
+
+        .stage-content p {
+            color: #718096;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .stage-skills-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: #718096;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+
+        .stage-skills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .skill-tag {
+            background: white;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            color: #2D3748;
+            border: 1px solid #E2E0DA;
+        }
+
+        .methodology-footer {
+            text-align: center;
+            margin-top: 48px;
+            color: #718096;
+            font-size: 14px;
+        }
+
+        /* Examples */
+        .examples {
+            background: #F8F7F4;
+        }
+
+        .examples-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 32px;
+        }
+
+        @media (max-width: 480px) {
+            .examples-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .example-card {
+            background: white;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        .example-header {
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: white;
+            font-weight: 600;
+        }
+
+        .example-header.telegram { background: #1E3A5F; }
+        .example-header.email { background: #4A7C59; }
+
+        .example-content {
+            padding: 24px;
+        }
+
+        .message-preview {
+            background: #F8F7F4;
+            border-radius: 16px;
+            padding: 20px;
+        }
+
+        .message-title {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .message-title span {
+            font-size: 24px;
+        }
+
+        .message-title strong {
+            color: #2D3748;
+            font-size: 16px;
+        }
+
+        .message-text {
+            color: #2D3748;
+            font-size: 14px;
+            line-height: 1.7;
+            margin-bottom: 16px;
+        }
+
+        .message-highlight {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            border-left: 4px solid #4A7C59;
+            margin-bottom: 16px;
+        }
+
+        .message-highlight strong {
+            color: #1E3A5F;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .message-highlight p {
+            color: #718096;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .message-highlight .conclusion {
+            color: #4A7C59;
+            font-weight: 600;
+            margin-top: 8px;
+        }
+
+        .message-action {
+            background: rgba(224, 122, 95, 0.1);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .message-action-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .message-action-title span {
+            font-size: 20px;
+        }
+
+        .message-action-title strong {
+            color: #2D3748;
+        }
+
+        .message-action p {
+            color: #718096;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .message-footer {
+            color: #718096;
+            font-size: 12px;
+            font-style: italic;
+        }
+
+        .teacher-section {
+            margin-bottom: 20px;
+        }
+
+        .teacher-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .teacher-section-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .teacher-section-header svg {
+            width: 20px;
+            height: 20px;
+            color: #4A7C59;
+        }
+
+        .teacher-section-header strong {
+            color: #2D3748;
+            font-size: 14px;
+        }
+
+        .teacher-section-header span {
+            font-size: 20px;
+        }
+
+        .teacher-section p {
+            color: #718096;
+            font-size: 14px;
+            line-height: 1.6;
+            padding-left: 28px;
+        }
+
+        .teacher-section .highlight {
+            color: #1E3A5F;
+            font-weight: 600;
+        }
+
+        .teacher-section ol {
+            color: #718096;
+            font-size: 14px;
+            line-height: 1.7;
+            padding-left: 44px;
+        }
+
+        .teacher-section ol li {
+            margin-bottom: 8px;
+        }
+
+        .teacher-next-step {
+            background: rgba(30, 58, 95, 0.05);
+            border-radius: 12px;
+            padding: 16px;
+            border-left: 4px solid #1E3A5F;
+        }
+
+        .teacher-next-step strong {
+            color: #1E3A5F;
+        }
+
+        /* Pricing */
+        .pricing {
+            background: white;
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+        }
+
+        .pricing-card {
+            background: #F8F7F4;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.12);
+        }
+
+        .pricing-card.recommended {
+            border: 2px solid #E07A5F;
+        }
+
+        .pricing-badge {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: #E07A5F;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .pricing-content {
+            padding: 32px;
+        }
+
+        .pricing-card.recommended .pricing-content {
+            padding-top: 56px;
+        }
+
+        .pricing-header {
+            margin-bottom: 24px;
+        }
+
+        .pricing-header h3 {
+            font-size: 20px;
+            margin-bottom: 8px;
+            color: #2D3748;
+        }
+
+        .pricing-header p {
+            color: #718096;
+            font-size: 14px;
+        }
+
+        .pricing-price {
+            margin-bottom: 24px;
+        }
+
+        .pricing-price .amount {
+            font-size: 42px;
+            font-weight: 700;
+        }
+
+        .pricing-price .period {
+            color: #718096;
+            font-size: 16px;
+        }
+
+        .pricing-features {
+            list-style: none;
+            margin-bottom: 32px;
+        }
+
+        .pricing-features li {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 12px;
+            color: #2D3748;
+            font-size: 14px;
+        }
+
+        .pricing-features li::before {
+            content: '✓';
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        .pricing-card:nth-child(1) .pricing-features li::before { color: #718096; }
+        .pricing-card:nth-child(2) .pricing-features li::before { color: #E07A5F; }
+        .pricing-card:nth-child(3) .pricing-features li::before { color: #1E3A5F; }
+
+        .pricing-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .pricing-card:nth-child(1) .pricing-btn {
+            background: white;
+            border: 2px solid #E2E0DA;
+            color: #2D3748;
+        }
+
+        .pricing-card:nth-child(1) .pricing-btn:hover {
+            border-color: #718096;
+            background: #F8F7F4;
+        }
+
+        .pricing-card:nth-child(2) .pricing-btn {
+            background: #E07A5F;
+            color: white;
+            box-shadow: 0 10px 30px rgba(224, 122, 95, 0.3);
+        }
+
+        .pricing-card:nth-child(2) .pricing-btn:hover {
+            background: #C6694F;
+            box-shadow: 0 15px 40px rgba(224, 122, 95, 0.4);
+        }
+
+        .pricing-card:nth-child(3) .pricing-btn {
+            background: white;
+            border: 2px solid #E2E0DA;
+            color: #2D3748;
+        }
+
+        .pricing-card:nth-child(3) .pricing-btn:hover {
+            border-color: #1E3A5F;
+            background: #F8F7F4;
+        }
+
+        .pricing-promo {
+            text-align: center;
+            margin-top: 48px;
+        }
+
+        .pricing-promo-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(74, 124, 89, 0.1);
+            color: #4A7C59;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 500;
+        }
+
+        .pricing-promo-badge span {
+            font-size: 20px;
+        }
+
+        /* CTA Final */
+        .cta-final {
+            background: linear-gradient(135deg, #1E3A5F 0%, #2D5A87 100%);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-final .blob-1 {
+            top: -10%;
+            right: 5%;
+            left: auto;
+        }
+
+        .cta-final .blob-2 {
+            bottom: 10%;
+            left: 10%;
+        }
+
+        .cta-content {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .cta-content h2 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            margin-bottom: 24px;
+            color: white;
+        }
+
+        .cta-content h2 span {
+            color: #E07A5F;
+        }
+
+        .cta-content p {
+            font-size: 18px;
+            color: rgba(255,255,255,0.8);
+            margin-bottom: 40px;
+        }
+
+        .cta-contacts {
+            margin-top: 64px;
+            padding-top: 40px;
+            border-top: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .cta-contacts > p {
+            color: rgba(255,255,255,0.6);
+            font-size: 14px;
+            margin-bottom: 24px;
+        }
+
+        .contacts-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 24px;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .contact-item:hover {
+            color: white;
+        }
+
+        .contact-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        /* Footer */
+        footer {
+            background: #1A202C;
+            color: rgba(255,255,255,0.8);
+            padding: 64px 20px 32px;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr repeat(3, 1fr);
+            gap: 48px;
+            max-width: 1200px;
+            margin: 0 auto 48px;
+        }
+
+        @media (max-width: 768px) {
+            .footer-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .footer-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .footer-brand {
+            max-width: 300px;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .footer-logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #1E3A5F 0%, #4A7C59 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .footer-logo span {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            color: white;
+        }
+
+        .footer-brand p {
+            color: rgba(255,255,255,0.6);
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .footer-socials {
+            display: flex;
+            gap: 10px;
+        }
+
+        .footer-socials a {
+            width: 36px;
+            height: 36px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            font-size: 16px;
+            transition: background 0.3s ease;
+        }
+
+        .footer-socials a:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .footer-column h4 {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: white;
+            margin-bottom: 20px;
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column li {
+            margin-bottom: 12px;
+        }
+
+        .footer-column a {
+            color: rgba(255,255,255,0.6);
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+
+        .footer-column a:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding-top: 24px;
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .footer-bottom p {
+            color: rgba(255,255,255,0.4);
+            font-size: 14px;
+        }
+
+        /* Animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.6s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-blob blob-1"></div>
+        <div class="hero-blob blob-2"></div>
+        <div class="hero-blob blob-3"></div>
+        
+        <div class="hero-content">
+            <div class="hero-badge">
+                <span class="sparkle">✨</span>
+                <span>Новое поколение коммуникации с родителями</span>
             </div>
-          </AnimatedItem>
-          
-          <AnimatedItem delay={0.4}>
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight" style={{ fontFamily: 'Montserrat, sans-serif' }}>
-              AI-система отчётов,<br />
-              <span className="text-[#E07A5F]">которая удерживает клиентов</span>
+            
+            <h1>
+                AI-система отчётов,<br>
+                <span>которая удерживает клиентов</span>
             </h1>
-          </AnimatedItem>
-          
-          <AnimatedItem delay={0.6}>
-            <p className="text-lg sm:text-xl text-white/80 mb-10 max-w-2xl mx-auto leading-relaxed" style={{ fontFamily: 'Inter, sans-serif' }}>
-              Автоматическая генерация персонализированных отчётов для родителей. Педагог голосом — родитель получает инсайт.
+            
+            <p>
+                Автоматическая генерация персонализированных отчётов для родителей. 
+                Педагог голосом — родитель получает инсайт.
             </p>
-          </AnimatedItem>
-          
-          <AnimatedItem delay={0.8} className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button 
-              onClick={() => scrollToSection(sectionRefs.pricing)}
-              className="inline-flex items-center justify-center bg-[#E07A5F] hover:bg-[#C6694F] text-white px-8 py-4 text-lg font-semibold rounded-xl shadow-lg shadow-[#E07A5F]/30 transition-all duration-300 hover:shadow-xl hover:shadow-[#E07A5F]/40"
-            >
-              Запросить демо
-              <ArrowRightIcon className="ml-2 w-5 h-5" />
-            </button>
-            <button 
-              onClick={() => scrollToSection(sectionRefs.examples)}
-              className="inline-flex items-center justify-center border-2 border-white/30 text-white hover:bg-white/10 px-8 py-4 text-lg font-semibold rounded-xl transition-all duration-300"
-            >
-              Увидеть пример отчёта
-            </button>
-          </AnimatedItem>
-          
-          <AnimatedItem delay={1.0} className="mt-16 flex flex-wrap justify-center gap-8 text-white/60 text-sm">
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-[#4A7C59] rounded-full"></div>
-              <span>Голосовой ввод</span>
+            
+            <div class="hero-buttons">
+                <a href="https://t.me/TagirFeo" class="btn-primary" target="_blank">
+                    Записаться на пилот
+                    <span>→</span>
+                </a>
+                <a href="#examples" class="btn-secondary">
+                    Увидеть пример отчёта
+                </a>
             </div>
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-[#4A7C59] rounded-full"></div>
-              <span>2 минуты на отчёт</span>
+            
+            <div class="hero-features">
+                <div class="hero-feature">Голосовой ввод</div>
+                <div class="hero-feature">2 минуты на отчёт</div>
+                <div class="hero-feature">Научная методика</div>
             </div>
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-[#4A7C59] rounded-full"></div>
-              <span>Научная методика</span>
-            </div>
-          </AnimatedItem>
         </div>
-      </section>
-
-      {/* Problems Section */}
-      <AnimatedSection refKey="problems" className="py-20 md:py-28 bg-[#F8F7F4]">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#2D3748] mb-4" style={{ fontFamily: 'Montserrat, sans-serif' }}>Знакомая ситуация?</h2>
-            <p className="text-lg text-[#718096] max-w-2xl mx-auto">Владельцы образовательных центров сталкиваются с этими проблемами каждый день</p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
-            <AnimatedItem delay={0.2}>
-              <div className="bg-white p-8 h-full rounded-2xl shadow-lg shadow-gray-200/50 hover:shadow-xl hover:shadow-gray-200/70 transition-shadow duration-300">
-                <div className="w-14 h-14 rounded-2xl flex items-center justify-center mb-6" style={{ backgroundColor: '#E07A5F15' }}>
-                  <UsersIcon className="w-7 h-7" />
-                </div>
-                <h3 className="text-xl font-bold text-[#2D3748] mb-3" style={{ fontFamily: 'Montserrat, sans-serif' }}>Отток клиентов</h3>
-                <p className="text-[#718096] leading-relaxed">Дети бросают кружок через 2-3 месяца, и вы не понимаете почему</p>
-              </div>
-            </AnimatedItem>
-            
-            <AnimatedItem delay={0.4}>
-              <div className="bg-white p-8 h-full rounded-2xl shadow-lg shadow-gray-200/50 hover:shadow-xl hover:shadow-gray-200/70 transition-shadow duration-300">
-                <div className="w-14 h-14 rounded-2xl flex items-center justify-center mb-6" style={{ backgroundColor: '#1E3A5F15' }}>
-                  <WarningIcon className="w-7 h-7" />
-                </div>
-                <h3 className="text-xl font-bold text-[#2D3748] mb-3" style={{ fontFamily: 'Montserrat, sans-serif' }}>Жалобы родителей</h3>
-                <p className="text-[#718096] leading-relaxed">Что мой ребёнок делает на занятиях? Почему нет результата?</p>
-              </div>
-            </AnimatedItem>
-            
-            <AnimatedItem delay={0.6}>
-              <div className="bg-white p-8 h-full rounded-2xl shadow-lg shadow-gray-200/50 hover:shadow-xl hover:shadow-gray-200/70 transition-shadow duration-300">
-                <div className="w-14 h-14 rounded-2xl flex items-center justify-center mb-6" style={{ backgroundColor: '#4A7C5915' }}>
-                  <ClockIcon className="w-7 h-7" />
-                </div>
-                <h3 className="text-xl font-bold text-[#2D3748] mb-3" style={{ fontFamily: 'Montserrat, sans-serif' }}>Педагоги перегружены</h3>
-                <p className="text-[#718096] leading-relaxed">Отчёты отнимают часы. Педагоги сопротивляются «лишней» работе</p>
-              </div>
-            </AnimatedItem>
-          </div>
-        </div>
-      </AnimatedSection>
-
-      {/* How It Works Section */}
-      <AnimatedSection refKey="howItWorks" className="py-20 md:py-28 bg-gradient-to-br from-[#1E3A5F] to-[#2D5A87] overflow-hidden">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4" style={{ fontFamily: 'Montserrat, sans-serif' }}>Как это работает</h2>
-            <p className="text-lg text-white/70 max-w-2xl mx-auto">Три простых шага от голоса педагога к инсайту родителя</p>
-          </div>
-          
-          <div className="relative">
-            <div className="hidden lg:block absolute top-1/2 left-[16%] right-[16%] h-0.5 bg-white/20 -translate-y-1/2"></div>
-            
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
-              <AnimatedItem delay={0.2}>
-                <div className="relative">
-                  <div className="bg-white/10 backdrop-blur-sm rounded-3xl p-8 border border-white/20 hover:bg-white/15 transition-colors duration-300">
-                    <div className="absolute -top-4 left-8 w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm" style={{ backgroundColor: '#4A7C59' }}>01</div>
-                    <div className="w-20 h-20 rounded-2xl flex items-center justify-center mb-6 mx-auto" style={{ backgroundColor: '#4A7C5930' }}>
-                      <MicIcon className="w-10 h-10" />
-                    </div>
-                    <h3 className="text-xl font-bold text-white text-center mb-3" style={{ fontFamily: 'Montserrat, sans-serif' }}>Педагог диктует</h3>
-                    <p className="text-white/70 text-center leading-relaxed">2 минуты голосом в Telegram — никаких форм и таблиц</p>
-                  </div>
-                </div>
-              </AnimatedItem>
-              
-              <AnimatedItem delay={0.4}>
-                <div className="relative">
-                  <div className="bg-white/10 backdrop-blur-sm rounded-3xl p-8 border border-white/20 hover:bg-white/15 transition-colors duration-300">
-                    <div className="absolute -top-4 left-8 w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm" style={{ backgroundColor: '#1E3A5F' }}>02</div>
-                    <div className="w-20 h-20 rounded-2xl flex items-center justify-center mb-6 mx-auto" style={{ backgroundColor: '#1E3A5F30' }}>
-                      <BrainIcon className="w-10 h-10" />
-                    </div>
-                    <h3 className="text-xl font-bold text-white text-center mb-3" style={{ fontFamily: 'Montserrat, sans-serif' }}>AI анализирует</h3>
-                    <p className="text-white/70 text-center leading-relaxed">Через методику развития мышления TAGIR</p>
-                  </div>
-                </div>
-              </AnimatedItem>
-              
-              <AnimatedItem delay={0.6}>
-                <div className="relative">
-                  <div className="bg-white/10 backdrop-blur-sm rounded-3xl p-8 border border-white/20 hover:bg-white/15 transition-colors duration-300">
-                    <div className="absolute -top-4 left-8 w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm" style={{ backgroundColor: '#E07A5F' }}>03</div>
-                    <div className="w-20 h-20 rounded-2xl flex items-center justify-center mb-6 mx-auto" style={{ backgroundColor: '#E07A5F30' }}>
-                      <SendIcon className="w-10 h-10" />
-                    </div>
-                    <h3 className="text-xl font-bold text-white text-center mb-3" style={{ fontFamily: 'Montserrat, sans-serif' }}>Родитель получает</h3>
-                    <p className="text-white/70 text-center leading-relaxed">Красивый отчёт с пониманием развития ребёнка</p>
-                  </div>
-                </div>
-              </AnimatedItem>
-            </div>
-          </div>
-          
-          <div className="text-center mt-12">
-            <button 
-              onClick={() => scrollToSection(sectionRefs.examples)}
-              className="inline-flex items-center justify-center bg-[#E07A5F] hover:bg-[#C6694F] text-white px-8 py-4 text-lg font-semibold rounded-xl shadow-lg shadow-[#E07A5F]/30 transition-all duration-300"
-            >
-              Увидеть пример отчёта
-              <ArrowRightIcon className="ml-2 w-5 h-5" />
-            </button>
-          </div>
-        </div>
-      </AnimatedSection>
-
-      {/* Features Section */}
-      <AnimatedSection refKey="features" className="py-20 md:py-28 bg-[#F8F7F4]">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#2D3748] mb-4" style={{ fontFamily: 'Montserrat, sans-serif' }}>Что вы получаете</h2>
-            <p className="text-lg text-[#718096] max-w-2xl mx-auto">Полный набор инструментов для удержания клиентов и развития педагогов</p>
-          </div>
-          
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            <FeatureCard 
-              icon={<MicIcon className="w-6 h-6" />}
-              title="Голосовой ввод"
-              description="Педагог просто диктует, не пишет. Экономия времени — от 30 минут до 2 минут."
-              delay={0.1}
-              color="green-600"
-            />
-            
-            <FeatureCard 
-              icon={<BookOpenIcon className="w-6 h-6" />}
-              title="Методика TAGIR"
-              description="Отчёты основаны на научной системе развития мышления 7-18 лет."
-              delay={0.2}
-              color="blue-900"
-            />
-            
-            <FeatureCard 
-              icon={<FileTextIcon className="w-6 h-6" />}
-              title="Два формата"
-              description="Telegram для родителя + письмо педагогу с подтверждением компетенции."
-              delay={0.3}
-              color="orange-500"
-            />
-            
-            <FeatureCard 
-              icon={<HouseIcon className="w-6 h-6" />}
-              title="Домашние шаги"
-              description="Конкретное действие для родителя после каждого занятия — вовлечение без принуждения."
-              delay={0.4}
-              color="green-600"
-            />
-            
-            <FeatureCard 
-              icon={<TrendingUpIcon className="w-6 h-6" />}
-              title="История развития"
-              description="Накопление данных о прогрессе ребёнка — виден рост навыков во времени."
-              delay={0.5}
-              color="blue-900"
-            />
-            
-            <FeatureCard 
-              icon={<PaletteIcon className="w-6 h-6" />}
-              title="Белый лейбл"
-              description="Отчёты с вашим брендом — родители видят вашу заботу и экспертность."
-              delay={0.6}
-              color="orange-500"
-            />
-          </div>
-        </div>
-      </AnimatedSection>
-
-      {/* Methodology Section */}
-      <AnimatedSection refKey="methodology" className="py-20 md:py-28 bg-white">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#2D3748] mb-4" style={{ fontFamily: 'Montserrat, sans-serif' }}>
-              Методика развития мышления <span className="text-[#1E3A5F]">TAGIR</span>
-            </h2>
-            <p className="text-lg text-[#718096] max-w-3xl mx-auto">12 навыков в 3 категориях. От простых поделок до стартапов — каждый этап готовит к следующему.</p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
-            <AnimatedItem delay={0.2} className="h-full">
-              <div className="h-full bg-[#F8F7F4] rounded-2xl shadow-lg shadow-gray-200/50 hover:shadow-xl hover:shadow-gray-200/70 transition-all duration-300 overflow-hidden border-t-4 border-[#4A7C59]">
-                <div className="p-6 lg:p-8">
-                  <div className="flex items-center gap-4 mb-6">
-                    <div className="w-14 h-14 rounded-2xl flex items-center justify-center" style={{ backgroundColor: '#4A7C5915' }}>
-                      <LightbulbIcon className="w-7 h-7" />
-                    </div>
-                    <div>
-                      <span className="text-sm font-semibold px-3 py-1 rounded-full" style={{ backgroundColor: '#4A7C5915', color: '#4A7C59' }}>7-9 лет</span>
-                    </div>
-                  </div>
-                  <h3 className="text-xl font-bold text-[#2D3748] mb-3" style={{ fontFamily: 'Montserrat, sans-serif' }}>Мастерская создателей</h3>
-                  <p className="text-[#718096] leading-relaxed mb-6">Работа руками, простые проекты с быстрым результатом. Первый опыт успеха и вера «я могу создавать».</p>
-                  <div>
-                    <p className="text-xs font-semibold text-[#718096] uppercase tracking-wider mb-3">Развиваемые навыки</p>
-                    <div className="flex flex-wrap gap-2">
-                      <span className="text-xs px-3 py-1.5 rounded-lg bg-white text-[#2D3748] border border-gray-200">Формулирование мыслей</span>
-                      <span className="text-xs px-3 py-1.5 rounded-lg bg-white text-[#2D3748] border border-gray-200">Определение задач</span>
-                      <span className="text-xs px-3 py-1.5 rounded-lg bg-white text-[#2D3748] border border-gray-200">Базовая командная работа</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </AnimatedItem>
-            
-            <AnimatedItem delay={0.4} className="h-full">
-              <div className="h-full bg-[#F8F7F4] rounded-2xl shadow-lg shadow-gray-200/50 hover:shadow-xl hover:shadow-gray-200/70 transition-all duration-300 overflow-hidden border-t-4 border-[#1E3A5F]">
-                <div className="p-6 lg:p-8">
-                  <div className="flex items-center gap-4 mb-6">
-                    <div className="w-14 h-14 rounded-2xl flex items-center justify-center" style={{ backgroundColor: '#1E3A5F15' }}>
-                      <TargetIcon className="w-7 h-7" />
-                    </div>
-                    <div>
-                      <span className="text-sm font-semibold px-3 py-1 rounded-full" style={{ backgroundColor: '#1E3A5F15', color: '#1E3A5F' }}>10-14 лет</span>
-                    </div>
-                  </div>
-                  <h3 className="text-xl font-bold text-[#2D3748] mb-3" style={{ fontFamily: 'Montserrat, sans-serif' }}>Лаборатория решений</h3>
-                  <p className="text-[#718096] leading-relaxed mb-6">Интеллектуальные проекты, системное мышление, профориентация. От школьных проектов до предпринимательства.</p>
-                  <div>
-                    <p className="text-xs font-semibold text-[#718096] uppercase tracking-wider mb-3">Развиваемые навыки</p>
-                    <div className="flex flex-wrap gap-2">
-                      <span className="text-xs px-3 py-1.5 rounded-lg bg-white text-[#2D3748] border border-gray-200">Системное мышление</span>
-                      <span className="text-xs px-3 py-1.5 rounded-lg bg-white text-[#2D3748] border border-gray-200">Управление проектом</span>
-                      <span className="text-xs px-3 py-1.5 rounded-lg bg-white text-[#2D3748] border border-gray-200">Финансовая грамотность</span>
-                      <span className="text-xs px-3 py-1.5 rounded-lg bg-white text-[#2D3748] border border-gray-200">Коммуникация</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </AnimatedItem>
-            
-            <AnimatedItem delay={0.6} className="h-full">
-              <div className="h-full bg-[#F8F7F4] rounded-2xl shadow-lg shadow-gray-200/50 hover:shadow-xl hover:shadow-gray-200/70 transition-all duration-300 overflow-hidden border-t-4 border-[#E07A5F]">
-                <div className="p-6 lg:p-8">
-                  <div className="flex items-center gap-4 mb-6">
-                    <div className="w-14 h-14 rounded-2xl flex items-center justify-center" style={{ backgroundColor: '#E07A5F15' }}>
-                      <RocketIcon className="w-7 h-7" />
-                    </div>
-                    <div>
-                      <span className="text-sm font-semibold px-3 py-1 rounded-full" style={{ backgroundColor: '#E07A5F15', color: '#E07A5F' }}>15-18 лет</span>
-                    </div>
-                  </div>
-                  <h3 className="text-xl font-bold text-[#2D3748] mb-3" style={{ fontFamily: 'Montserrat, sans-serif' }}>Инкубатор стартапов</h3>
-                  <p className="text-[#718096] leading-relaxed mb-6">Реальные стартап-проекты, лидерство, стратегическое планирование. Подготовка к взрослой жизни.</p>
-                  <div>
-                    <p className="text-xs font-semibold text-[#718096] uppercase tracking-wider mb-3">Развиваемые навыки</p>
-                    <div className="flex flex-wrap gap-2">
-                      <span className="text-xs px-3 py-1.5 rounded-lg bg-white text-[#2D3748] border border-gray-200">Лидерство</span>
-                      <span className="text-xs px-3 py-1.5 rounded-lg bg-white text-[#2D3748] border border-gray-200">Product Management</span>
-                      <span className="text-xs px-3 py-1.5 rounded-lg bg-white text-[#2D3748] border border-gray-200">Business Development</span>
-                      <span className="text-xs px-3 py-1.5 rounded-lg bg-white text-[#2D3748] border border-gray-200">Self-awareness</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </AnimatedItem>
-          </div>
-          
-          <div className="mt-12 text-center">
-            <p className="text-[#718096] text-sm">Основано на фундаментальных принципах: Образование vs Воспитание, Потребитель → Создатель, Сложное мышление через сложные вопросы</p>
-          </div>
-        </div>
-      </AnimatedSection>
-
-      {/* Examples Section */}
-      <AnimatedSection refKey="examples" className="py-20 md:py-28 bg-[#F8F7F4]">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#2D3748] mb-4" style={{ fontFamily: 'Montserrat, sans-serif' }}>Как выглядят отчёты</h2>
-            <p className="text-lg text-[#718096] max-w-2xl mx-auto">Два формата — для родителя и педагога. Один эпизод, две перспективы.</p>
-          </div>
-          
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
-            <AnimatedItem delay={0.2}>
-              <div className="bg-white rounded-3xl shadow-xl shadow-gray-200/60 overflow-hidden">
-                <div className="bg-[#1E3A5F] px-6 py-4 flex items-center gap-3">
-                  <MessageCircleIcon className="w-5 h-5 text-white" />
-                  <span className="text-white font-semibold">Telegram для родителя</span>
-                </div>
-                <div className="p-6">
-                  <div className="bg-[#F8F7F4] rounded-2xl p-5 space-y-4">
-                    <div className="flex items-start gap-3">
-                      <span className="text-2xl">🎯</span>
-                      <div>
-                        <p className="font-bold text-[#2D3748]">Даниил открыл для себя настоящую физику</p>
-                      </div>
-                    </div>
-                    <div className="text-[#2D3748] space-y-3 text-sm leading-relaxed">
-                      <p>На занятии Даниил решил создать игру про футбол. Мяч должен летать от игрока к воротам, которые стоят вдалеке.</p>
-                      <p>Первый вопрос: как сделать, чтобы мяч летел как настоящий?</p>
-                      <div className="bg-white rounded-xl p-4 border-l-4 border-[#4A7C59]">
-                        <p className="font-medium text-[#1E3A5F] mb-2">Интересное:</p>
-                        <p className="text-[#718096]">Даниил не просто спросил ИИ «как сделать полёт?». Сначала он определил, чего ему не хватает — вес мяча, силу удара, формулу. Потом попросил ИИ эти данные и внимательно разбирался, как это работает.</p>
-                        <p className="text-[#4A7C59] font-medium mt-2">Это не «получил ответ» — это «понял логику».</p>
-                      </div>
-                    </div>
-                    <div className="bg-[#E07A5F]/10 rounded-xl p-4">
-                      <div className="flex items-center gap-2 mb-2">
-                        <span className="text-lg">🏠</span>
-                        <span className="font-bold text-[#2D3748]">Один шаг дома:</span>
-                      </div>
-                      <p className="text-sm text-[#718096]">Попросите Даниила за 5–7 минут объяснить вам, какие 2–3 фактора влияют на дальность полёта мяча. Если захочет — пусть придумает, как это проверить в Scratch.</p>
-                    </div>
-                    <p className="text-xs text-[#718096] italic">Если захотите, напишите: как часто Даниил занимается программированием дома? Это помогает нам лучше подбирать задачи.</p>
-                  </div>
-                </div>
-              </div>
-            </AnimatedItem>
-            
-            <AnimatedItem delay={0.4}>
-              <div className="bg-white rounded-3xl shadow-xl shadow-gray-200/60 overflow-hidden">
-                <div className="bg-[#4A7C59] px-6 py-4 flex items-center gap-3">
-                  <MailIcon className="w-5 h-5 text-white" />
-                  <span className="text-white font-semibold">Письмо педагогу</span>
-                </div>
-                <div className="p-6">
-                  <div className="bg-[#F8F7F4] rounded-2xl p-5 space-y-5">
-                    <div>
-                      <div className="flex items-center gap-2 mb-3">
-                        <CircleCheckIcon className="w-5 h-5" />
-                        <span className="font-bold text-[#2D3748]">ВЫ ЗАМЕТИЛИ:</span>
-                      </div>
-                      <p className="text-sm text-[#718096] leading-relaxed pl-7">Вы видели, что Даниил не просто реализует идею — он останавливается и спрашивает: «Что мне не хватает, чтобы это работало?»</p>
-                      <p className="text-sm text-[#4A7C59] font-medium mt-2 pl-7">Это самый редкий навык. Даниил не ищет «готовый ответ» — ищет данные для собственной модели.</p>
-                    </div>
-                    <div className="border-t border-gray-200 pt-4">
-                      <div className="flex items-center gap-2 mb-3">
-                        <span className="text-xl">🎯</span>
-                        <span className="font-bold text-[#1E3A5F]">ЭТО СИСТЕМНОЕ МЫШЛЕНИЕ:</span>
-                      </div>
-                      <p className="text-sm text-[#718096] leading-relaxed pl-7">Даниил прошёл путь: <span className="text-[#1E3A5F] font-medium">Идея → Вопрос → Недостающие данные → Проверка логики</span></p>
-                      <p className="text-sm text-[#718096] mt-2 pl-7">Вы создали такое условие: «Вот идея, как её реализовать?» — и Даниил сам пришёл к выводу: «Мне нужны факты и проверка».</p>
-                    </div>
-                    <div className="border-t border-gray-200 pt-4">
-                      <div className="flex items-center gap-2 mb-3">
-                        <span className="text-xl">👁</span>
-                        <span className="font-bold text-[#2D3748]">СМОТРЕТЬ ДАЛЬШЕ:</span>
-                      </div>
-                      <ol className="text-sm text-[#718096] space-y-2 pl-7 list-decimal">
-                        <li>Что Даниил делал, когда столкнулся с непониманием? (задавал вопросы / молчал / просил помощь?)</li>
-                        <li>Он хотел «реальную физику» или готов был к упрощённой модели?</li>
-                        <li>Может ли он сам сказать, что именно в формуле непонятно?</li>
-                      </ol>
-                    </div>
-                    <div className="bg-[#1E3A5F]/5 rounded-xl p-4 border-l-4 border-[#1E3A5F]">
-                      <div className="flex items-center gap-2 mb-2">
-                        <span className="text-lg">📋</span>
-                        <span className="font-bold text-[#1E3A5F]">СЛЕДУЮЩИЙ ШАГ:</span>
-                      </div>
-                      <p className="text-sm text-[#718096]">На следующем занятии: перевести «формулу/идею» в код. Может быть, не идеальную физику, а «табличную зависимость» — главное, чтобы работало.</p>
-                      <p className="text-xs text-[#718096] mt-2 italic">Смотреть: как реагирует на необходимость упростить? Просит ли уточнения?</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </AnimatedItem>
-          </div>
-        </div>
-      </AnimatedSection>
-
-      {/* Pricing Section */}
-      <AnimatedSection refKey="pricing" className="py-20 md:py-28 bg-white">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#2D3748] mb-4" style={{ fontFamily: 'Montserrat, sans-serif' }}>Тарифы</h2>
-            <p className="text-lg text-[#718096] max-w-2xl mx-auto">Выберите подходящий план. Все тарифы включают голосовой ввод и методику TAGIR.</p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
-            <AnimatedItem delay={0.2} className="h-full">
-              <div className="h-full relative bg-[#F8F7F4] rounded-2xl shadow-lg shadow-gray-200/50 hover:shadow-xl hover:shadow-gray-200/70 transition-all duration-300 overflow-hidden">
-                <div className="p-6 lg:p-8">
-                  <div className="mb-6">
-                    <h3 className="text-xl font-bold text-[#2D3748] mb-2" style={{ fontFamily: 'Montserrat, sans-serif' }}>Старт</h3>
-                    <p className="text-sm text-[#718096]">Для небольших центров</p>
-                  </div>
-                  <div className="mb-6">
-                    <div className="flex items-baseline gap-1">
-                      <span className="text-4xl font-bold text-gray-600">15 000</span>
-                      <span className="text-gray-600">₽/месяц</span>
-                    </div>
-                  </div>
-                  <ul className="space-y-3 mb-8">
-                    <li className="flex items-start gap-3">
-                      <CheckIcon className="w-5 h-5 flex-shrink-0 mt-0.5 text-gray-600" />
-                      <span className="text-sm text-[#2D3748]">До 50 учеников</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <CheckIcon className="w-5 h-5 flex-shrink-0 mt-0.5 text-gray-600" />
-                      <span className="text-sm text-[#2D3748]">Базовые отчёты</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <CheckIcon className="w-5 h-5 flex-shrink-0 mt-0.5 text-gray-600" />
-                      <span className="text-sm text-[#2D3748]">Email поддержка</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <CheckIcon className="w-5 h-5 flex-shrink-0 mt-0.5 text-gray-600" />
-                      <span className="text-sm text-[#2D3748]">Стандартные шаблоны</span>
-                    </li>
-                  </ul>
-                  <button 
-                    onClick={() => scrollToSection(sectionRefs.contact)}
-                    className="w-full flex items-center justify-center py-4 font-semibold rounded-xl transition-all duration-300 bg-white border-2 border-gray-200 text-[#2D3748] hover:border-[#718096] hover:bg-gray-50"
-                  >
-                    Начать
-                    <ArrowRightIcon className="ml-2 w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-            </AnimatedItem>
-            
-            <AnimatedItem delay={0.4} className="h-full">
-              <div className="h-full relative bg-[#F8F7F4] rounded-2xl shadow-lg shadow-gray-200/50 hover:shadow-xl hover:shadow-gray-200/70 transition-all duration-300 overflow-hidden ring-2 ring-[#E07A5F]">
-                <div className="absolute top-0 left-0 right-0 bg-[#E07A5F] text-white text-center py-2 text-sm font-semibold">Рекомендуем</div>
-                <div className="p-6 lg:p-8 pt-14">
-                  <div className="mb-6">
-                    <h3 className="text-xl font-bold text-[#2D3748] mb-2" style={{ fontFamily: 'Montserrat, sans-serif' }}>Рост</h3>
-                    <p className="text-sm text-[#718096]">Для растущих центров</p>
-                  </div>
-                  <div className="mb-6">
-                    <div className="flex items-baseline gap-1">
-                      <span className="text-4xl font-bold text-[#E07A5F]">35 000</span>
-                      <span className="text-gray-600">₽/месяц</span>
-                    </div>
-                  </div>
-                  <ul className="space-y-3 mb-8">
-                    <li className="flex items-start gap-3">
-                      <CheckIcon className="w-5 h-5 flex-shrink-0 mt-0.5 text-[#E07A5F]" />
-                      <span className="text-sm text-[#2D3748]">До 150 учеников</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <CheckIcon className="w-5 h-5 flex-shrink-0 mt-0.5 text-[#E07A5F]" />
-                      <span className="text-sm text-[#2D3748]">Расширенная аналитика</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <CheckIcon className="w-5 h-5 flex-shrink-0 mt-0.5 text-[#E07A5F]" />
-                      <span className="text-sm text-[#2D3748]">Приоритетная поддержка</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <CheckIcon className="w-5 h-5 flex-shrink-0 mt-0.5 text-[#E07A5F]" />
-                      <span className="text-sm text-[#2D3748]">Настройка под бренд</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <CheckIcon className="w-5 h-5 flex-shrink-0 mt-0.5 text-[#E07A5F]" />
-                      <span className="text-sm text-[#2D3748]">История развития</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <CheckIcon className="w-5 h-5 flex-shrink-0 mt-0.5 text-[#E07A5F]" />
-                      <span className="text-sm text-[#2D3748]">API интеграция</span>
-                    </li>
-                  </ul>
-                  <button 
-                    onClick={() => scrollToSection(sectionRefs.contact)}
-                    className="w-full flex items-center justify-center py-4 font-semibold rounded-xl transition-all duration-300 bg-[#E07A5F] hover:bg-[#C6694F] text-white shadow-lg shadow-[#E07A5F]/30"
-                  >
-                    Выбрать Рост
-                    <ArrowRightIcon className="ml-2 w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-            </AnimatedItem>
-            
-            <AnimatedItem delay={0.6} className="h-full">
-              <div className="h-full relative bg-[#F8F7F4] rounded-2xl shadow-lg shadow-gray-200/50 hover:shadow-xl hover:shadow-gray-200/70 transition-all duration-300 overflow-hidden">
-                <div className="p-6 lg:p-8">
-                  <div className="mb-6">
-                    <h3 className="text-xl font-bold text-[#2D3748] mb-2" style={{ fontFamily: 'Montserrat, sans-serif' }}>Масштаб</h3>
-                    <p className="text-sm text-[#718096]">Для сетевых центров</p>
-                  </div>
-                  <div className="mb-6">
-                    <div className="flex items-baseline gap-1">
-                      <span className="text-4xl font-bold text-[#1E3A5F]">Индивидуально</span>
-                    </div>
-                  </div>
-                  <ul className="space-y-3 mb-8">
-                    <li className="flex items-start gap-3">
-                      <CheckIcon className="w-5 h-5 flex-shrink-0 mt-0.5 text-[#1E3A5F]" />
-                      <span className="text-sm text-[#2D3748]">Безлимит учеников</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <CheckIcon className="w-5 h-5 flex-shrink-0 mt-0.5 text-[#1E3A5F]" />
-                      <span className="text-sm text-[#2D3748]">Полная кастомизация</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <CheckIcon className="w-5 h-5 flex-shrink-0 mt-0.5 text-[#1E3A5F]" />
-                      <span className="text-sm text-[#2D3748]">Выделенный менеджер</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <CheckIcon className="w-5 h-5 flex-shrink-0 mt-0.5 text-[#1E3A5F]" />
-                      <span className="text-sm text-[#2D3748]">Интеграция с CRM</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <CheckIcon className="w-5 h-5 flex-shrink-0 mt-0.5 text-[#1E3A5F]" />
-                      <span className="text-sm text-[#2D3748]">SLA гарантии</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <CheckIcon className="w-5 h-5 flex-shrink-0 mt-0.5 text-[#1E3A5F]" />
-                      <span className="text-sm text-[#2D3748]">Обучение педагогов</span>
-                    </li>
-                  </ul>
-                  <button 
-                    onClick={() => scrollToSection(sectionRefs.contact)}
-                    className="w-full flex items-center justify-center py-4 font-semibold rounded-xl transition-all duration-300 bg-white border-2 border-gray-200 text-[#2D3748] hover:border-[#718096] hover:bg-gray-50"
-                  >
-                    Обсудить
-                    <ArrowRightIcon className="ml-2 w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-            </AnimatedItem>
-          </div>
-          
-          <div className="mt-12 text-center">
-            <div className="inline-flex items-center gap-2 bg-[#4A7C59]/10 text-[#4A7C59] px-4 py-3 rounded-xl">
-              <span className="text-lg">🎁</span>
-              <span className="font-medium">Пилот для первых 5 центров — бесплатно на 2 недели</span>
-            </div>
-          </div>
-        </div>
-      </AnimatedSection>
-
-      {/* Contact Section */}
-      <AnimatedSection refKey="contact" className="relative py-20 md:py-28 bg-gradient-to-br from-[#1E3A5F] to-[#2D5A87] overflow-hidden">
-        <div className="absolute rounded-full blur-3xl opacity-30 pointer-events-none" style={{ width: '350px', height: '350px', backgroundColor: '#4A7C59', top: '-10%', right: '5%' }}></div>
-        <div className="absolute rounded-full blur-3xl opacity-30 pointer-events-none" style={{ width: '250px', height: '250px', backgroundColor: '#E07A5F', bottom: '10%', left: '10%' }}></div>
         
-        <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <AnimatedItem delay={0.2}>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-6" style={{ fontFamily: 'Montserrat, sans-serif' }}>
-              Начните удерживать клиентов<br />
-              <span className="text-[#E07A5F]">уже через неделю</span>
-            </h2>
-          </AnimatedItem>
-          
-          <AnimatedItem delay={0.4}>
-            <p className="text-lg text-white/80 mb-10 max-w-2xl mx-auto">Пилот для первых 5 центров — бесплатно на 2 недели. Убедитесь в эффективности до оплаты.</p>
-          </AnimatedItem>
-          
-          <AnimatedItem delay={0.6}>
-            <div className="inline-block">
-              <button 
-                className="inline-flex items-center justify-center bg-[#E07A5F] hover:bg-[#C6694F] text-white px-10 py-5 text-lg font-semibold rounded-xl shadow-lg shadow-[#E07A5F]/30 transition-all duration-300 hover:shadow-xl hover:shadow-[#E07A5F]/40"
-              >
-                Записаться на пилот
-                <ArrowRightIcon className="ml-2 w-5 h-5" />
-              </button>
-            </div>
-          </AnimatedItem>
-          
-          <AnimatedItem delay={0.8} className="mt-16 pt-10 border-t border-white/20">
-            <p className="text-white/60 text-sm mb-6">Или свяжитесь с нами напрямую</p>
-            <div className="flex flex-col sm:flex-row justify-center gap-6">
-              <a href="https://t.me/tagir_support" className="flex items-center justify-center gap-3 text-white/80 hover:text-white transition-colors">
-                <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center">
-                  <MessageCircleIcon className="w-5 h-5" />
-                </div>
-                <span>@tagir_support</span>
-              </a>
-              <a href="mailto:hello@tagir.ru" className="flex items-center justify-center gap-3 text-white/80 hover:text-white transition-colors">
-                <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center">
-                  <MailIcon className="w-5 h-5" />
-                </div>
-                <span>hello@tagir.ru</span>
-              </a>
-              <a href="tel:+79991234567" className="flex items-center justify-center gap-3 text-white/80 hover:text-white transition-colors">
-                <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center">
-                  <PhoneIcon className="w-5 h-5" />
-                </div>
-                <span>+7 (999) 123-45-67</span>
-              </a>
-            </div>
-          </AnimatedItem>
-        </div>
-      </AnimatedSection>
+        <div class="scroll-indicator"></div>
+    </section>
 
-      {/* Footer */}
-      <footer className="bg-[#1A202C] text-white/80 py-16">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 lg:gap-8">
-            <div className="lg:col-span-2">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#1E3A5F] to-[#4A7C59] flex items-center justify-center">
-                  <BrainIcon className="w-5 h-5 text-white" />
+    <!-- Pain Points Section -->
+    <section class="pain-points">
+        <div class="container">
+            <div class="section-header fade-in">
+                <h2>Знакомая ситуация?</h2>
+                <p>Владельцы образовательных центров сталкиваются с этими проблемами каждый день</p>
+            </div>
+            
+            <div class="cards-grid">
+                <div class="card fade-in">
+                    <div class="card-icon" style="background: rgba(224, 122, 95, 0.15);">👥</div>
+                    <h3>Отток клиентов</h3>
+                    <p>Дети бросают кружок через 2-3 месяца, и вы не понимаете почему</p>
                 </div>
-                <span className="text-xl font-bold text-white" style={{ fontFamily: 'Montserrat, sans-serif' }}>TAGIR</span>
-              </div>
-              <p className="text-white/60 text-sm leading-relaxed mb-6 max-w-sm">AI-система отчётов для образовательных центров. Удерживайте клиентов через понимание развития детей.</p>
-              <div className="flex gap-3">
-                <a href="https://t.me/tagir_support" className="w-9 h-9 rounded-lg bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors">
-                  <MessageCircleIcon className="w-4 h-4" />
-                </a>
-                <a href="mailto:hello@tagir.ru" className="w-9 h-9 rounded-lg bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors">
-                  <MailIcon className="w-4 h-4" />
-                </a>
-                <a href="tel:+79991234567" className="w-9 h-9 rounded-lg bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors">
-                  <PhoneIcon className="w-4 h-4" />
-                </a>
-              </div>
+                
+                <div class="card fade-in">
+                    <div class="card-icon" style="background: rgba(30, 58, 95, 0.15);">💬</div>
+                    <h3>Жалобы родителей</h3>
+                    <p>Что мой ребёнок делает на занятиях? Почему нет результата?</p>
+                </div>
+                
+                <div class="card fade-in">
+                    <div class="card-icon" style="background: rgba(74, 124, 89, 0.15);">⏰</div>
+                    <h3>Педагоги перегружены</h3>
+                    <p>Отчёты отнимают часы. Педагоги сопротивляются «лишней» работе</p>
+                </div>
             </div>
-            
-            <div>
-              <h4 className="text-white font-semibold mb-4 text-sm uppercase tracking-wider">Продукт</h4>
-              <ul className="space-y-3">
-                <li><button onClick={() => scrollToSection(sectionRefs.methodology)} className="text-white/60 hover:text-white text-sm transition-colors">О методике</button></li>
-                <li><button onClick={() => scrollToSection(sectionRefs.pricing)} className="text-white/60 hover:text-white text-sm transition-colors">Тарифы</button></li>
-                <li><button onClick={() => scrollToSection(sectionRefs.examples)} className="text-white/60 hover:text-white text-sm transition-colors">Примеры</button></li>
-                <li><a href="#" className="text-white/60 hover:text-white text-sm transition-colors">Блог</a></li>
-              </ul>
-            </div>
-            
-            <div>
-              <h4 className="text-white font-semibold mb-4 text-sm uppercase tracking-wider">Компания</h4>
-              <ul className="space-y-3">
-                <li><a href="#" className="text-white/60 hover:text-white text-sm transition-colors">О нас</a></li>
-                <li><a href="#" className="text-white/60 hover:text-white text-sm transition-colors">Команда</a></li>
-                <li><a href="#" className="text-white/60 hover:text-white text-sm transition-colors">Карьера</a></li>
-                <li><button onClick={() => scrollToSection(sectionRefs.contact)} className="text-white/60 hover:text-white text-sm transition-colors">Контакты</button></li>
-              </ul>
-            </div>
-            
-            <div>
-              <h4 className="text-white font-semibold mb-4 text-sm uppercase tracking-wider">Правовая информация</h4>
-              <ul className="space-y-3">
-                <li><a href="#" className="text-white/60 hover:text-white text-sm transition-colors">Политика конфиденциальности</a></li>
-                <li><a href="#" className="text-white/60 hover:text-white text-sm transition-colors">Условия использования</a></li>
-                <li><a href="#" className="text-white/60 hover:text-white text-sm transition-colors">Договор оферты</a></li>
-              </ul>
-            </div>
-          </div>
-          
-          <div className="border-t border-white/10 my-10"></div>
-          
-          <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-            <p className="text-white/40 text-sm">© 2025 Мастерская развития мышления TAGIR. Все права защищены.</p>
-            <p className="text-white/40 text-sm">Сделано с заботой о детях и педагогах</p>
-          </div>
         </div>
-      </footer>
-    </main>
-  );
-}
+    </section>
+
+    <!-- Solution Section -->
+    <section class="solution">
+        <div class="container">
+            <div class="section-header fade-in">
+                <h2>Как это работает</h2>
+                <p>Три простых шага от голоса педагога к инсайту родителя</p>
+            </div>
+            
+            <div class="steps">
+                <div class="step fade-in">
+                    <div class="step-number" style="background: #4A7C59;">01</div>
+                    <div class="step-icon" style="background: rgba(74, 124, 89, 0.3);">🎤</div>
+                    <h3>Педагог диктует</h3>
+                    <p>2 минуты голосом в Telegram — никаких форм и таблиц</p>
+                </div>
+                
+                <div class="step fade-in">
+                    <div class="step-number" style="background: #1E3A5F;">02</div>
+                    <div class="step-icon" style="background: rgba(30, 58, 95, 0.3);">🧠</div>
+                    <h3>AI анализирует</h3>
+                    <p>Через методику развития мышления TAGIR</p>
+                </div>
+                
+                <div class="step fade-in">
+                    <div class="step-number" style="background: #E07A5F;">03</div>
+                    <div class="step-icon" style="background: rgba(224, 122, 95, 0.3);">📨</div>
+                    <h3>Родитель получает</h3>
+                    <p>Красивый отчёт с пониманием развития ребёнка</p>
+                </div>
+            </div>
+            
+            <div class="solution-cta fade-in">
+                <a href="#examples" class="btn-primary">
+                    Увидеть пример отчёта
+                    <span>→</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features">
+        <div class="container">
+            <div class="section-header fade-in">
+                <h2>Что вы получаете</h2>
+                <p>Полный набор инструментов для удержания клиентов и развития педагогов</p>
+            </div>
+            
+            <div class="features-grid">
+                <div class="feature-card fade-in">
+                    <div class="feature-icon" style="background: rgba(74, 124, 89, 0.15);">🎤</div>
+                    <h3>Голосовой ввод</h3>
+                    <p>Педагог просто диктует, не пишет. Экономия времени — с 30 минут до 2 минут.</p>
+                </div>
+                
+                <div class="feature-card fade-in">
+                    <div class="feature-icon" style="background: rgba(30, 58, 95, 0.15);">📚</div>
+                    <h3>Методика TAGIR</h3>
+                    <p>Отчёты основаны на научной системе развития мышления детей от 7 до 18 лет.</p>
+                </div>
+                
+                <div class="feature-card fade-in">
+                    <div class="feature-icon" style="background: rgba(224, 122, 95, 0.15);">📄</div>
+                    <h3>Два формата</h3>
+                    <p>Telegram для родителя + письмо педагогу с подтверждением компетенции.</p>
+                </div>
+                
+                <div class="feature-card fade-in">
+                    <div class="feature-icon" style="background: rgba(74, 124, 89, 0.15);">🏠</div>
+                    <h3>Домашние шаги</h3>
+                    <p>Конкретное действие для родителя после каждого занятия — вовлечение без принуждения.</p>
+                </div>
+                
+                <div class="feature-card fade-in">
+                    <div class="feature-icon" style="background: rgba(30, 58, 95, 0.15);">📈</div>
+                    <h3>История развития</h3>
+                    <p>Накопление данных о прогрессе ребёнка — виден рост навыков во времени.</p>
+                </div>
+                
+                <div class="feature-card fade-in">
+                    <div class="feature-icon" style="background: rgba(224, 122, 95, 0.15);">🏷️</div>
+                    <h3>Ваш бренд</h3>
+                    <p>Отчёты с логотипом вашего центра — родители видят вашу заботу и экспертность.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Methodology Section -->
+    <section class="methodology" id="methodology">
+        <div class="container">
+            <div class="section-header fade-in">
+                <h2>Методика развития мышления <span>TAGIR</span></h2>
+                <p>12 навыков в 3 категориях. От простых поделок до стартапов — каждый этап готовит к следующему.</p>
+            </div>
+            
+            <div class="stages-grid">
+                <div class="stage-card green fade-in">
+                    <div class="stage-header">
+                        <div class="stage-icon">💡</div>
+                        <span class="stage-age">7-9 лет</span>
+                    </div>
+                    <div class="stage-content">
+                        <h3>Мастерская создателей</h3>
+                        <p>Работа руками, простые проекты с быстрым результатом. Первый опыт успеха и вера «я могу создавать».</p>
+                        <div class="stage-skills-label">Развиваемые навыки</div>
+                        <div class="stage-skills">
+                            <span class="skill-tag">Формулирование мыслей</span>
+                            <span class="skill-tag">Определение задач</span>
+                            <span class="skill-tag">Базовая командная работа</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stage-card blue fade-in">
+                    <div class="stage-header">
+                        <div class="stage-icon">🎯</div>
+                        <span class="stage-age">10-14 лет</span>
+                    </div>
+                    <div class="stage-content">
+                        <h3>Лаборатория решений</h3>
+                        <p>Интеллектуальные проекты, системное мышление, профориентация. От школьных проектов до предпринимательства.</p>
+                        <div class="stage-skills-label">Развиваемые навыки</div>
+                        <div class="stage-skills">
+                            <span class="skill-tag">Системное мышление</span>
+                            <span class="skill-tag">Управление проектом</span>
+                            <span class="skill-tag">Финансовая грамотность</span>
+                            <span class="skill-tag">Коммуникация</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stage-card orange fade-in">
+                    <div class="stage-header">
+                        <div class="stage-icon">🚀</div>
+                        <span class="stage-age">15-18 лет</span>
+                    </div>
+                    <div class="stage-content">
+                        <h3>Инкубатор стартапов</h3>
+                        <p>Реальные стартап-проекты, лидерство, стратегическое планирование. Подготовка к взрослой жизни.</p>
+                        <div class="stage-skills-label">Развиваемые навыки</div>
+                        <div class="stage-skills">
+                            <span class="skill-tag">Лидерство</span>
+                            <span class="skill-tag">Product Management</span>
+                            <span class="skill-tag">Business Development</span>
+                            <span class="skill-tag">Self-awareness</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="methodology-footer fade-in">
+                <p>Основано на фундаментальных принципах: Образование vs Воспитание, Потребитель → Создатель, Сложное мышление через сложные вопросы</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Examples Section -->
+    <section class="examples" id="examples">
+        <div class="container">
+            <div class="section-header fade-in">
+                <h2>Как выглядят отчёты</h2>
+                <p>Два формата — для родителя и педагога. Один эпизод, две перспективы.</p>
+            </div>
+            
+            <div class="examples-grid">
+                <!-- Parent Report -->
+                <div class="example-card fade-in">
+                    <div class="example-header telegram">
+                        <span>💬</span>
+                        <span>Telegram для родителя</span>
+                    </div>
+                    <div class="example-content">
+                        <div class="message-preview">
+                            <div class="message-title">
+                                <span>🎯</span>
+                                <strong>Даниил открыл для себя настоящую физику</strong>
+                            </div>
+                            
+                            <div class="message-text">
+                                <p>На занятии Даниил решил создать игру про футбол. Мяч должен летать от игрока к воротам, которые стоят вдалеке.</p>
+                                <p style="margin-top: 8px;">Первый вопрос: как сделать, чтобы мяч летел как настоящий?</p>
+                            </div>
+                            
+                            <div class="message-highlight">
+                                <strong>Интересное:</strong>
+                                <p>Даниил не просто спросил ИИ «как сделать полёт?». Сначала он определил, чего ему не хватает — вес мяча, силу удара, формулу. Потом попросил ИИ эти данные и внимательно разбирался, как это работает.</p>
+                                <p class="conclusion">Это не «получил ответ» — это «понял логику».</p>
+                            </div>
+                            
+                            <div class="message-action">
+                                <div class="message-action-title">
+                                    <span>🏠</span>
+                                    <strong>Один шаг дома:</strong>
+                                </div>
+                                <p>Попросите Даниила за 5–7 минут объяснить вам, какие 2–3 фактора влияют на дальность полёта мяча. Если захочет — пусть придумает, как это проверить в Scratch.</p>
+                            </div>
+                            
+                            <p class="message-footer">Если захотите, напишите: как часто Даниил занимается программированием дома? Это помогает нам лучше подбирать задачи.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Teacher Report -->
+                <div class="example-card fade-in">
+                    <div class="example-header email">
+                        <span>✉️</span>
+                        <span>Письмо педагогу</span>
+                    </div>
+                    <div class="example-content">
+                        <div class="message-preview">
+                            <div class="teacher-section">
+                                <div class="teacher-section-header">
+                                    <span>✅</span>
+                                    <strong>ВЫ ЗАМЕТИЛИ:</strong>
+                                </div>
+                                <p>Вы видели, что Даниил не просто реализует идею — он останавливается и спрашивает: «Что мне не хватает, чтобы это работало?»</p>
+                                <p style="color: #4A7C59; font-weight: 600; margin-top: 8px; padding-left: 28px;">Это самый редкий навык. Даниил не ищет «готовый ответ» — ищет данные для собственной модели.</p>
+                            </div>
+                            
+                            <div class="teacher-section" style="border-top: 1px solid #E2E0DA; padding-top: 16px; margin-top: 16px;">
+                                <div class="teacher-section-header">
+                                    <span>🎯</span>
+                                    <strong>ЭТО СИСТЕМНОЕ МЫШЛЕНИЕ:</strong>
+                                </div>
+                                <p>Даниил прошёл путь: <span class="highlight">Идея → Вопрос → Недостающие данные → Проверка логики</span></p>
+                                <p style="margin-top: 8px;">Вы создали такое условие: «Вот идея, как её реализовать?» — и Даниил сам пришёл к выводу: «Мне нужны факты и проверка».</p>
+                            </div>
+                            
+                            <div class="teacher-section" style="border-top: 1px solid #E2E0DA; padding-top: 16px; margin-top: 16px;">
+                                <div class="teacher-section-header">
+                                    <span>👁</span>
+                                    <strong>СМОТРЕТЬ ДАЛЬШЕ:</strong>
+                                </div>
+                                <ol>
+                                    <li>Что Даниил делал, когда столкнулся с непониманием? (задавал вопросы / молчал / просил помощь?)</li>
+                                    <li>Он хотел «реальную физику» или готов был к упрощённой модели?</li>
+                                    <li>Может ли он сам сказать, что именно в формуле непонятно?</li>
+                                </ol>
+                            </div>
+                            
+                            <div class="teacher-next-step" style="margin-top: 16px;">
+                                <div class="teacher-section-header">
+                                    <span>📋</span>
+                                    <strong>СЛЕДУЮЩИЙ ШАГ:</strong>
+                                </div>
+                                <p>На следующем занятии: перевести «формулу/идею» в код. Может быть, не идеальную физику, а «табличную зависимость» — главное, чтобы работало.</p>
+                                <p style="font-size: 12px; font-style: italic; margin-top: 8px;">Смотреть: как реагирует на необходимость упростить? Просит ли уточнения?</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="pricing" id="pricing">
+        <div class="container">
+            <div class="section-header fade-in">
+                <h2>Тарифы</h2>
+                <p>Выберите подходящий план. Все тарифы включают голосовой ввод и методику TAGIR.</p>
+            </div>
+            
+            <div class="pricing-grid">
+                <div class="pricing-card fade-in">
+                    <div class="pricing-content">
+                        <div class="pricing-header">
+                            <h3>Старт</h3>
+                            <p>Для небольших центров</p>
+                        </div>
+                        <div class="pricing-price">
+                            <span class="amount" style="color: #718096;">15 000</span>
+                            <span class="period">₽/месяц</span>
+                        </div>
+                        <ul class="pricing-features">
+                            <li>До 50 учеников</li>
+                            <li>Базовые отчёты</li>
+                            <li>Email поддержка</li>
+                            <li>Стандартные шаблоны</li>
+                        </ul>
+                        <a href="https://t.me/TagirFeo" class="pricing-btn" target="_blank">
+                            Начать
+                            <span>→</span>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="pricing-card recommended fade-in">
+                    <div class="pricing-badge">Рекомендуем</div>
+                    <div class="pricing-content">
+                        <div class="pricing-header">
+                            <h3>Рост</h3>
+                            <p>Для растущих центров</p>
+                        </div>
+                        <div class="pricing-price">
+                            <span class="amount" style="color: #E07A5F;">35 000</span>
+                            <span class="period">₽/месяц</span>
+                        </div>
+                        <ul class="pricing-features">
+                            <li>До 150 учеников</li>
+                            <li>Расширенная аналитика</li>
+                            <li>Приоритетная поддержка</li>
+                            <li>Настройка под бренд</li>
+                            <li>История развития</li>
+                            <li>API интеграция</li>
+                        </ul>
+                        <a href="https://t.me/TagirFeo" class="pricing-btn" target="_blank">
+                            Выбрать Рост
+                            <span>→</span>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="pricing-card fade-in">
+                    <div class="pricing-content">
+                        <div class="pricing-header">
+                            <h3>Масштаб</h3>
+                            <p>Для сетевых центров</p>
+                        </div>
+                        <div class="pricing-price">
+                            <span class="amount" style="color: #1E3A5F; font-size: 28px;">Индивидуально</span>
+                        </div>
+                        <ul class="pricing-features">
+                            <li>Безлимит учеников</li>
+                            <li>Полная кастомизация</li>
+                            <li>Выделенный менеджер</li>
+                            <li>Интеграция с CRM</li>
+                            <li>SLA гарантии</li>
+                            <li>Обучение педагогов</li>
+                        </ul>
+                        <a href="https://t.me/TagirFeo" class="pricing-btn" target="_blank">
+                            Обсудить
+                            <span>→</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="pricing-promo fade-in">
+                <div class="pricing-promo-badge">
+                    <span>🎁</span>
+                    <span>Пилот для первых 5 центров — бесплатно на 2 недели</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Final Section -->
+    <section class="cta-final" id="contact">
+        <div class="hero-blob blob-1"></div>
+        <div class="hero-blob blob-2"></div>
+        
+        <div class="cta-content">
+            <h2 class="fade-in">
+                Начните удерживать клиентов<br>
+                <span>уже через неделю</span>
+            </h2>
+            
+            <p class="fade-in">
+                Пилот для первых 5 центров — бесплатно на 2 недели. 
+                Убедитесь в эффективности до оплаты.
+            </p>
+            
+            <div class="fade-in">
+                <a href="https://t.me/TagirFeo" class="btn-primary" target="_blank" style="animation: pulse 3s ease-in-out infinite;">
+                    Записаться на пилот
+                    <span>→</span>
+                </a>
+            </div>
+            
+            <div class="cta-contacts fade-in">
+                <p>Свяжитесь с нами напрямую</p>
+                
+                <div class="contacts-grid">
+                    <a href="https://t.me/TagirFeo" class="contact-item" target="_blank">
+                        <div class="contact-icon">💬</div>
+                        <span>@TagirFeo</span>
+                    </a>
+                    
+                    <a href="mailto:tagir75@gmail.com" class="contact-item">
+                        <div class="contact-icon">✉️</div>
+                        <span>tagir75@gmail.com</span>
+                    </a>
+                    
+                    <a href="tel:+79786508626" class="contact-item">
+                        <div class="contact-icon">📞</div>
+                        <span>+7 (978) 650-86-26</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <div class="footer-logo">
+                    <div class="footer-logo-icon">🧠</div>
+                    <span>TAGIR</span>
+                </div>
+                <p>AI-система отчётов для образовательных центров. Удерживайте клиентов через понимание развития детей.</p>
+                <div class="footer-socials">
+                    <a href="https://t.me/TagirFeo" target="_blank">💬</a>
+                    <a href="mailto:tagir75@gmail.com">✉️</a>
+                    <a href="tel:+79786508626">📞</a>
+                </div>
+            </div>
+            
+            <div class="footer-column">
+                <h4>Продукт</h4>
+                <ul>
+                    <li><a href="#methodology">О методике</a></li>
+                    <li><a href="#pricing">Тарифы</a></li>
+                    <li><a href="#examples">Примеры</a></li>
+                    <li><a href="#">Блог</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-column">
+                <h4>Компания</h4>
+                <ul>
+                    <li><a href="#">О нас</a></li>
+                    <li><a href="#">Команда</a></li>
+                    <li><a href="#">Карьера</a></li>
+                    <li><a href="#contact">Контакты</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-column">
+                <h4>Правовая информация</h4>
+                <ul>
+                    <li><a href="#">Политика конфиденциальности</a></li>
+                    <li><a href="#">Условия использования</a></li>
+                    <li><a href="#">Договор оферты</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>© 2025 Мастерская развития мышления TAGIR. Все права защищены.</p>
+            <p>Сделано с заботой о детях и педагогах</p>
+        </div>
+    </footer>
+
+    <!-- Scroll Animation Script -->
+    <script>
+        // Fade in animation on scroll
+        const fadeElements = document.querySelectorAll('.fade-in');
+        
+        const fadeInObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        });
+        
+        fadeElements.forEach(el => fadeInObserver.observe(el));
+        
+        // Hero animations on load
+        window.addEventListener('load', () => {
+            const heroElements = document.querySelectorAll('.hero-content > *');
+            heroElements.forEach((el, index) => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(30px)';
+                setTimeout(() => {
+                    el.style.transition = 'all 0.6s ease';
+                    el.style.opacity = '1';
+                    el.style.transform = 'translateY(0)';
+                }, 100 + index * 150);
+            });
+        });
+    </script>
+</body>
+</html>
